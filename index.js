@@ -1,8 +1,13 @@
 // get api data from url
 let getData = () => {
-  fetch("https://openapi.programming-hero.com/api/news/category/01")
-    .then((res) => res.json())
-    .then((data) => displayData(data.data));
+  try {
+    fetch("https://openapi.programming-hero.com/api/news/category/01")
+      .then((res) => res.json())
+      .then((data) => displayData(data.data));
+  }
+  catch (error) {
+    console.log(error);
+  }
 };
 getData();
 // display data
@@ -85,6 +90,7 @@ let getCategoryName = (recivedCategory) => {
     `;
     setCategoryHtml.appendChild(createNewsDiv);
   }
+  spinner(false);
 };
 catagoryData();
 
@@ -99,11 +105,30 @@ let getNewsData = (categoryID) => {
 // getNewsData();
 
 let showCategoryDetails = (CategoryData) => {
+  spinner(true);
   let url = `https://openapi.programming-hero.com/api/news/category/${CategoryData}`;
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => showNewsInHml(data.data));
+  try {
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => showNewsInHml(data.data));
+
+  }
+  catch(error) {
+    console.log(error)
+  }
+  setHtmlHere.innerHTML = '';
 };
+//  spiner start 
+const spinner = isloading => {
+  const loaderSection = document.getElementById('loader');
+  if (isloading) {
+    loaderSection.classList.remove('d-none');
+  }
+  else {
+    loaderSection.classList.add('d-none');
+  }
+}
+
 
 // show category all details by onclick category
 let showNewsInHml = (getNewsCategorized) => {
