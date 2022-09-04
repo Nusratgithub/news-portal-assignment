@@ -25,7 +25,7 @@ let displayData = (displayRecivedData) => {
     createDiv.classList.add("each-news-wrapper");
     createDiv.innerHTML = ` 
 <div class="news-items-for-flex">
-  <img src="${singleNewsData.thumbnail_url}" alt="" class="news-image" />
+  <img src="${singleNewsData.thumbnail_url}" alt="" class="news-image " />
   <div class="news-info">
     <h2>${singleNewsData.title}</h2>
     <p>${singleNewsData.details.slice(0, 350)}</p>
