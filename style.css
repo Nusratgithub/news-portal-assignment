@@ -139,6 +139,7 @@
 @media screen and (max-width: 768px) {
   .news-items-for-flex img {
       width: 100%;
+      height: 60%;
 
     }
   .author-info img {
