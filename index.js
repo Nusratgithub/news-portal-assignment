@@ -28,7 +28,7 @@ let displayData = (displayRecivedData) => {
   <img src="${singleNewsData.thumbnail_url}" alt="" class="news-image" />
   <div class="news-info">
     <h2>${singleNewsData.title}</h2>
-    <p>${singleNewsData.details.slice(0, 550)}</p>
+    <p>${singleNewsData.details.slice(0, 350)}</p>
     <div class="author-info">
       <div class="publish-date-and-author-name">
         <img src="${singleNewsData.author.img}" alt="" />
@@ -134,7 +134,7 @@ let showNewsInHml = (getNewsCategorized) => {
   <img src="${singleNewsCategory.thumbnail_url}" alt="" class="news-image" />
   <div class="news-info">
     <h2>${singleNewsCategory.title}</h2>
-    <p>${singleNewsCategory.details.slice(0, 550)}</p>
+    <p>${singleNewsCategory.details.slice(0, 350)}</p>
     <div class="author-info">
       <div class="publish-date-and-author-name">
         <img src="${singleNewsCategory.author.img}" alt="" />
