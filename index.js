@@ -1,15 +1,15 @@
 const loadNews = async () => {
-  const url = `https://openapi.programming-hero.com/api/news/category/01`
+  const url = `https://openapi.programming-hero.com/api/news/category/02`
   try {
     const res = await fetch(url);
     const data = await res.json();
-    displayPhones(data.data);
+    showCategoryDetails(data.data);
   }
   catch (error) {
     console.log(error);
   }
 }
-const displayPhones = data => {
+const showCategoryDetails = data => {
   console.log(data);
   const newsCatagory = document.getElementById('news-category');
   data.forEach(data => {
@@ -21,7 +21,7 @@ const displayPhones = data => {
             <img src="${data.image_url}"class="card-img-top img-fluid" alt="...">
             <div class="card-body">
               <h5 class="card-title">${data.title}</h5>
-              <p class="card-text">${data.details.slice(0, 90)}</p>
+              <p class="card-text">${data.details.slice(0,80)}</p>
             </div>
             <div class="d-flex justify-content-">
             <div class="mx-3 d-flex justify-content-between">
@@ -34,7 +34,7 @@ const displayPhones = data => {
               <a class="ms-auto m-4 text-black"> <i class="text-right fa-regular fa-eye"> ${data.total_view}</i></a>
             </div>
             <div class="card-footer text-center">
-             <button onclick="loadAuthorDetail('${data.author}')" class="btn text-muted" data-bs-toggle="modal" data-bs-target="#exampleModal">Show-details</button>
+             <button onclick="loadAuthorDetail('${data}')" class="btn text-muted" data-bs-toggle="modal" data-bs-target="#exampleModal">Show-details</button>
             </div>
           </div>
         </div>
@@ -44,21 +44,20 @@ const displayPhones = data => {
 }
 
 
-const loadAuthorDetail = (news_id) => {
-  console.log(news_id);
-  fetch(`https://openapi.programming-hero.com/api/news/${news_id}`)
+const loadAuthorDetail = () => {
+  fetch(`https://openapi.programming-hero.com/api/news/category/01`)
     .then((res) => res.json())
-    .then((data) => displayAuthorDetail(data));
+    .then((data) => displayAuthorDetail(data.data));
 };
 
-const displayAuthorDetail = (author) => {
-  const {name,published_date} = author;
+const displayAuthorDetail = (data) => {
+  console.log(data);
   const detailContainer = document.getElementById("author-details");
   detailContainer.innerHTML = `
      <div>
-        <h5 class="card-title">Author Name: ${name} </h5>
-        <p class="card-text">Publis date:${published_date}</p>
-        <p class="card-text">Author Bio:</p>
+        <h6 class="card-title">Author Name: ${data[0].author.name}</h6>
+        <h6 class="card-text">Publis date: ${data[0].author.published_date} </h6>
+        <h6 class="card-text">Total view: ${data[0].total_view}</h6>
      </div>
      
      `;
