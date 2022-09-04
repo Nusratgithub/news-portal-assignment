@@ -1,65 +1,174 @@
-const loadNews = async () => {
-  const url = `https://openapi.programming-hero.com/api/news/category/02`
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    showCategoryDetails(data.data);
-  }
-  catch (error) {
-    console.log(error);
-  }
-}
-const showCategoryDetails = data => {
-  console.log(data);
-  const newsCatagory = document.getElementById('news-category');
-  data.forEach(data => {
-    const phoneDiv = document.createElement('div');
-    phoneDiv.classList.add('col');
-    phoneDiv.innerHTML = `
-    <div class="col rounded-5 h-100">
-          <div class="card h-100">
-            <img src="${data.image_url}"class="card-img-top img-fluid" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">${data.title}</h5>
-              <p class="card-text">${data.details.slice(0,80)}</p>
-            </div>
-            <div class="d-flex justify-content-">
-            <div class="mx-3 d-flex justify-content-between">
-              <img class="author-img rounded-circle mt-1" src="${data.author.img}">
-              <div class="mx-3">
-                <h6>${data.author.name}</h6>
-                <p>${data.author.published_date}</p>
-              </div>
-              </div>
-              <a class="ms-auto m-4 text-black"> <i class="text-right fa-regular fa-eye"> ${data.total_view}</i></a>
-            </div>
-            <div class="card-footer text-center">
-             <button onclick="loadAuthorDetail('${data}')" class="btn text-muted" data-bs-toggle="modal" data-bs-target="#exampleModal">Show-details</button>
-            </div>
-          </div>
-        </div>
-    `;
-    newsCatagory.appendChild(phoneDiv);
-  });
-}
-
-
-const loadAuthorDetail = () => {
-  fetch(`https://openapi.programming-hero.com/api/news/category/01`)
+// get api data from url
+let getData = () => {
+  fetch("https://openapi.programming-hero.com/api/news/category/01")
     .then((res) => res.json())
-    .then((data) => displayAuthorDetail(data.data));
+    .then((data) => displayData(data.data));
+};
+getData();
+// display data
+let displayData = (displayRecivedData) => {
+  let setHtmlHere = document.getElementById("setHtmlHere");
+  setHtmlHere.innerHTML = ``;
+  displayRecivedData.forEach((singleNewsData) => {
+    // modal start
+    let modalBody = document.getElementById("modal-body");
+    modalBody.innerHTML = ` 
+     <div class="mdoal-info"> 
+        <h5>Author Name: ${singleNewsData.author.name} </h5>
+        <span>Publish date: ${singleNewsData.author.published_date}</span>
+        <p class="modal-text">Total view:  ${singleNewsData.total_view} </p>
+    </div>
+    
+   `;
+    // modal end
+    let createDiv = document.createElement("div");
+    createDiv.classList.add("each-news-wrapper");
+    createDiv.innerHTML = ` 
+<div class="news-items-for-flex">
+  <img src="${singleNewsData.thumbnail_url}" alt="" class="news-image" />
+  <div class="news-info">
+    <h2>${singleNewsData.title}</h2>
+    <p>${singleNewsData.details.slice(0, 550)}</p>
+    <div class="author-info">
+      <div class="publish-date-and-author-name">
+        <img src="${singleNewsData.author.img}" alt="" />
+        <div>
+          <h5>${singleNewsData.author.name}</h5>
+          <span>${singleNewsData.author.published_date}</span>
+        </div>
+      </div>
+      <div class="view">
+        <i class="fa fa-eye"></i> <span>${singleNewsData.total_view}</span>
+      </div>
+      <div class="ratings">
+        <i class="fa-regular fa-star-half-stroke"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+      </div>
+      <button id="details-btn"  data-bs-toggle="modal" data-bs-target="#exampleModal">Details</button>
+    </div>
+  </div>
+</div>
+    `;
+    setHtmlHere.appendChild(createDiv);
+  });
+  let itemFound = document.getElementById("item-found");
+  let wholeItemFouondMsg = document.getElementById('whole-items-messege');
+  if (displayRecivedData.length === 0) {
+    wholeItemFouondMsg.classList.add('d-none')
+  }
+  else {
+    wholeItemFouondMsg.classList.remove('d-none')
+    itemFound.innerText = displayRecivedData.length;
+  }
 };
 
-const displayAuthorDetail = (data) => {
-  console.log(data);
-  const detailContainer = document.getElementById("author-details");
-  detailContainer.innerHTML = `
-     <div>
-        <h6 class="card-title">Author Name: ${data[0].author.name}</h6>
-        <h6 class="card-text">Publis date: ${data[0].author.published_date} </h6>
-        <h6 class="card-text">Total view: ${data[0].total_view}</h6>
-     </div>
-     
+// categorized item
+let catagoryData = () => {
+  let url = `https://openapi.programming-hero.com/api/news/categories`;
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => getCategoryName(data.data));
+};
+// display category news list
+let getCategoryName = (recivedCategory) => {
+  // show 100 text in news description
+  let newsCategory = recivedCategory.news_category;
+  let setCategoryHtml = document.getElementById("category-item-will-set-here");
+
+  for (singleNews of newsCategory) {
+    let createNewsDiv = document.createElement("div");
+    createNewsDiv.innerHTML = ` 
+      <li class="fs-5"> <a onclick="showCategoryDetails('${singleNews.category_id}')"> ${singleNews.category_name} </a> </li>
+    `;
+    setCategoryHtml.appendChild(createNewsDiv);
+  }
+};
+catagoryData();
+
+// filtering category
+let getNewsData = (categoryID) => {
+  let url = `https://openapi.programming-hero.com/api/news/category/${categoryID}`;
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => showCategoryDetails(data));
+};
+
+// getNewsData();
+
+let showCategoryDetails = (CategoryData) => {
+  let url = `https://openapi.programming-hero.com/api/news/category/${CategoryData}`;
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => showNewsInHml(data.data));
+};
+
+// show category all details by onclick category
+let showNewsInHml = (getNewsCategorized) => {
+  let setHtmlCategoryHere = document.getElementById("setCategoryHtmlHere");
+  setHtmlCategoryHere.innerText = "";
+  if (getNewsCategorized.length === 0) {
+    setHtmlCategoryHere.innerHTML = `
+       <h2 class="text-center">No data available. explore another category!</h2>
+    `;
+  }
+  for (let singleNewsCategory of getNewsCategorized) {
+    // modal start
+    let modalBody = document.getElementById("modal-body");
+    modalBody.innerHTML = ` 
+       <div class="mdoal-info">
+        <h5>Author Name: ${singleNewsCategory.author.name} </h5>
+        <span>Publish date: ${singleNewsCategory.author.published_date}</span>
+        <p class="modal-text">Total view:  ${singleNewsCategory.total_view} </p>
+    </div>
+    `;
+    // modal end
+
+    let singleDataSetHTmlCreateElemnt = document.createElement("div");
+    singleDataSetHTmlCreateElemnt.classList.add("each-news-wrapper");
+    singleDataSetHTmlCreateElemnt.innerHTML = ` 
+      
+ <div class="news-items-for-flex">
+  <img src="${singleNewsCategory.thumbnail_url}" alt="" class="news-image" />
+  <div class="news-info">
+    <h2>${singleNewsCategory.title}</h2>
+    <p>${singleNewsCategory.details.slice(0, 550)}</p>
+    <div class="author-info">
+      <div class="publish-date-and-author-name">
+        <img src="${singleNewsCategory.author.img}" alt="" />
+        <div>
+          <h5>${singleNewsCategory.author.name}</h5>
+          <span>${singleNewsCategory.author.published_date}</span>
+        </div>
+      </div>
+      <div class="view">
+        <i class="fa fa-eye"></i> <span>${singleNewsCategory.total_view}</span>
+      </div>
+      <div class="ratings">
+        <i class="fa-regular fa-star-half-stroke"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+      </div>
+      <button id="details-btn"  data-bs-toggle="modal" data-bs-target="#exampleModal">Details</button>
+    </div>
+  </div>
+</div>
      `;
-}
-loadNews();
+    setHtmlCategoryHere.appendChild(singleDataSetHTmlCreateElemnt);
+  }
+  // items found message
+  let itemFound = document.getElementById("item-found");
+  let wholeItemFouondMsg = document.getElementById('whole-items-messege');
+  if (getNewsCategorized.length === 0) {
+    wholeItemFouondMsg.classList.add('d-none')
+  }
+  else {
+    wholeItemFouondMsg.classList.remove('d-none')
+    itemFound.innerText = getNewsCategorized.length;
+  }
+};
+
