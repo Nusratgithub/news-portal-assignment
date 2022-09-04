@@ -111,7 +111,7 @@ let showNewsInHml = (getNewsCategorized) => {
   setHtmlCategoryHere.innerText = "";
   if (getNewsCategorized.length === 0) {
     setHtmlCategoryHere.innerHTML = `
-       <h2 class="text-center">No data available. explore another category!</h2>
+       <h2 class="my-4 text-center">No data available. explore another category!</h2>
     `;
   }
   for (let singleNewsCategory of getNewsCategorized) {
